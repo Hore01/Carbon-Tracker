@@ -40,5 +40,6 @@ streamlit run app.py
 - EPA (US)
 
 ##  About
-Built by [Olajumoke Akinremi] as part of a portfolio demonstrating impact-focused digital tools for climate action.
+Built by Olajumoke Akinremi as part of a portfolio demonstrating impact-focused digital tools for climate action.
+
 
