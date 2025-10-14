@@ -1,6 +1,10 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 from fpdf import FPDF
+#  Helper to make text PDF-safe
+def safe_text(text: str) -> str:
+# Converts unsupported characters to something fpdf can handle
+    return text.encode("latin-1", "replace").decode("latin-1")
 import io
 
 # Initialize session state
@@ -54,18 +58,24 @@ if st.session_state.history:
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=12)
-        pdf.cell(200, 10, txt="Carbon Emissions Premium Report", ln=True, align='C')
-        pdf.ln(10)
-
+        pdf.cell(200, 10, txt=safe_text("Carbon Emissions Report"), ln=True, align='C')
+        pdf.cell(200, 10, txt=safe_text(f"Name: {user_name}"), ln=True)
+    if organization:
+        pdf.cell(200, 10, txt=safe_text(f"Organization: {organization}"), ln=True)
+        pdf.cell(200, 10, txt=safe_text(""), ln=True)
+        
+    for act, val, emis in st.session_state.history:
+        pdf.cell(200, 10, txt=safe_text(f"{act}: {val} units - {emis:.2f} kg CO2"), ln=True)
+        pdf.cell(200, 10, txt=safe_text(f"Total Emissions: {total:.2f} kg CO2"), ln=True)
         pdf.cell(200, 10, txt=f"Name: {user_name}", ln=True)
-        if organization:
-            pdf.cell(200, 10, txt=f"Organization: {organization}", ln=True)
+        
+    if organization:
+        pdf.cell(200, 10, txt=f"Organization: {organization}", ln=True)
         pdf.cell(200, 10, txt="", ln=True)
 
-        for act, val, emis in st.session_state.history:
-            pdf.cell(200, 10, txt=f"{act}: {val} units → {emis:.2f} kg CO₂", ln=True)
-
-        pdf.cell(200, 10, txt=f"Total Emissions: {total:.2f} kg CO₂", ln=True)
+    for act, val, emis in st.session_state.history:
+         pdf.cell(200, 10, txt=f"{act}: {val} units → {emis:.2f} kg CO₂", ln=True)
+         pdf.cell(200, 10, txt=f"Total Emissions: {total:.2f} kg CO₂", ln=True)
 
         if include_tips:
             pdf.ln(10)
@@ -91,4 +101,5 @@ if st.session_state.history:
             data=pdf_output,
             file_name="carbon_emissions_premium_report.pdf",
             mime="application/pdf"
+
         )
