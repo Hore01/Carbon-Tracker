@@ -1,4 +1,7 @@
 import io
+import tempfile
+from datetime import datetime
+
 import matplotlib.pyplot as plt
 import streamlit as st
 from fpdf import FPDF
@@ -26,17 +29,18 @@ st.subheader("Estimate your carbon footprint from daily activities")
 activity = st.selectbox("Choose an activity:", ["Driving", "Flying", "Electricity Use"])
 value = st.number_input("Enter distance (km) or energy used (kWh):", min_value=0.0)
 
-factors = {
-    "Driving": 0.21,
-    "Flying": 0.25,
-    "Electricity Use": 0.233
-}
+factors = {"Driving": 0.21, "Flying": 0.25, "Electricity Use": 0.233}
 
 # Add entry
 if st.button("Add to Report"):
     emissions = value * factors[activity]
     st.session_state.history.append((activity, value, emissions))
     st.success(f"Added: {emissions:.2f} kg CO2 for {value} units of {activity}")
+
+# Optional: clear report
+if st.button("Clear Report"):
+    st.session_state.history = []
+    st.experimental_rerun()
 
 # Show results
 if st.session_state.history:
@@ -64,7 +68,8 @@ if st.session_state.history:
 
         # Header
         pdf.cell(200, 10, txt=safe_text("Carbon Emissions Premium Report"), ln=True, align="C")
-        pdf.ln(5)
+        pdf.cell(200, 8, txt=safe_text(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}"), ln=True)
+        pdf.ln(2)
 
         # User info
         pdf.cell(200, 10, txt=safe_text(f"Name: {user_name}"), ln=True)
@@ -97,12 +102,23 @@ if st.session_state.history:
             for tip in tips:
                 pdf.cell(200, 8, txt=safe_text(tip), ln=True)
 
-        # Output as bytes (most reliable for FPDF 1.x)
-        pdf_bytes = pdf.output(dest="S").encode("latin-1")
+        # Optional: embed the pie chart into the PDF
+        if include_chart and breakdown:
+            fig2, ax2 = plt.subplots()
+            ax2.pie(breakdown.values(), labels=breakdown.keys(), autopct="%1.1f%%")
+            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+                fig2.savefig(tmp.name, dpi=150, bbox_inches="tight")
+                plt.close(fig2)
+                pdf.image(tmp.name, w=180)
+                pdf.ln(4)
 
+        # Output as bytes and download
+        pdf_bytes = pdf.output(dest="S").encode("latin-1")
         st.download_button(
             label="Click to Download Your Premium PDF Report",
             data=pdf_bytes,
             file_name="carbon_emissions_premium_report.pdf",
             mime="application/pdf",
         )
+
+
