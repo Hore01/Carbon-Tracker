@@ -1,0 +1,49 @@
+{
+"meta": {
+"units": "kgCO2e",
+"notes": "Default factors for demo. Replace with official sources (e.g., UK GHG Conversion Factors, EPA)."
+},
+"region": "global_default",
+"transport": {
+"car": {
+"petrol": 0.192,
+"diesel": 0.171,
+"hybrid": 0.120,
+"ev": 0.060
+},
+"motorbike": 0.103,
+"bus": 0.089,
+"rail": 0.041,
+"flight": {
+"short": 0.255,
+"medium": 0.146,
+"long": 0.115
+}
+},
+"home_energy": {
+"electricity_kwh": 0.233,
+"natural_gas_kwh": 0.184,
+"lpg_kwh": 0.214,
+"heating_oil_kwh": 0.265
+},
+"food_weekly": {
+"beef_kg": 27.0,
+"lamb_kg": 39.2,
+"pork_kg": 12.1,
+"poultry_kg": 6.9,
+"cheese_kg": 13.5,
+"milk_litre": 1.3,
+"coffee_kg": 17.0,
+"rice_kg": 4.0,
+"vegetables_kg": 2.0
+},
+"purchases": {
+"electronics_usd": 0.30,
+"clothing_usd": 0.02,
+"furniture_usd": 0.05
+},
+"waste": {
+"general_kg": 1.0,
+"recycled_kg": 0.1
+}
+}
