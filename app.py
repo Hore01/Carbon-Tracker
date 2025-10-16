@@ -70,7 +70,7 @@ if st.session_state.history:
     st.markdown(f"**Total emissions:** {total:.2f} kg CO2")
 
     # ---------------- PDF Export ----------------
-    if st.button("Download Premium PDF Report"):
+    if st.button("Download PDF Report"):
         pdf = FPDF()
         pdf.set_auto_page_break(auto=True, margin=15)
         pdf.alias_nb_pages()   # enable page numbers
@@ -79,7 +79,7 @@ if st.session_state.history:
         if include_cover:
             pdf.add_page()
             pdf.set_font("Arial", "B", 16)
-            pdf.cell(0, 12, safe_text("Carbon Emissions Premium Report"), ln=True, align="C")
+            pdf.cell(0, 12, safe_text("Carbon Emissions Report"), ln=True, align="C")
 
             pdf.set_font("Arial", "", 12)
             pdf.ln(4)
@@ -168,13 +168,14 @@ if st.session_state.history:
         filename = f"carbon_emissions_report_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
         pdf_bytes = pdf.output(dest="S").encode("latin-1")
         st.download_button(
-            label="Click to Download Your Premium PDF Report",
+            label="Click to Download Your PDF Report",
             data=pdf_bytes,
             file_name=filename,
             mime="application/pdf",
         )
 else:
     st.info("Add at least one activity to generate your report.")
+
 
 
 
